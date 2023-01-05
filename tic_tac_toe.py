@@ -148,7 +148,7 @@ class AI:
             # minimax algo choice
             eval, move = self.minimax(main_board, False)
 
-        print(f'AI has chosen to mark in squre at pos {move} with eval of: {eval}')
+        #print(f'AI has chosen to mark in squre at pos {move} with eval of: {eval}')
         return move
 
 
