@@ -19,7 +19,7 @@ bfont = pygame.font.SysFont("Arial", 20, bold=True)
 
 class Button:
     def __init__(self, text) -> None:
-        self.text = bfont.render(text, 1, LINE_COLOR, BG_COLOR)
+        self.text = bfont.render(text, 1, LINE_COLOR, MENU_COLOR)
         self.size = self.text.get_size()
         self.text_surface = pygame.Surface(self.size)
         #self.text_surface.fill(BG_COLOR)
