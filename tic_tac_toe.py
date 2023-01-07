@@ -9,9 +9,24 @@ import numpy as np
 from constants import *
 
 pygame.init()
-screen = pygame.display.set_mode((HIGH, WIGHT))
+screen = pygame.display.set_mode((WIDTH, S_HIGHT))
 pygame.display.set_caption('Tic Tac Toe')
 screen.fill(BG_COLOR)
+menu_surface = pygame.Surface(MENU_SIZE)
+menu_surface.fill(MENU_COLOR)
+
+bfont = pygame.font.SysFont("Arial", 20, bold=True)
+
+class Button:
+    def __init__(self, text) -> None:
+        self.text = bfont.render(text, 1, LINE_COLOR, BG_COLOR)
+        self.size = self.text.get_size()
+        self.text_surface = pygame.Surface(self.size)
+        #self.text_surface.fill(BG_COLOR)
+
+    def show(self):
+        self.text_surface.blit(self.text, (0, 0))
+        menu_surface.blit(self.text_surface, (10, 10))
 
 class Board:
     def __init__(self) -> None:
@@ -30,31 +45,31 @@ class Board:
         for col in range(COLS):
             if self.squers[0][col] ==  self.squers[1][col] ==  self.squers[2][col] != 0:
                 if show:
-                    sPos = (col * SQUER_SIZE + SQUER_SIZE // 2, 0)
-                    ePos = (col * SQUER_SIZE + SQUER_SIZE // 2, HIGH)
+                    sPos = (col * SQUER_SIZE + SQUER_SIZE // 2, MENU_HIGHT)
+                    ePos = (col * SQUER_SIZE + SQUER_SIZE // 2, HIGHT + MENU_HIGHT)
                     pygame.draw.line(screen, WIN_COLOR, sPos, ePos, LINE_WIDTH)
                 return self.squers[0][col]
         # horizontal win
         for row in range(ROWS):
             if self.squers[row][0] ==  self.squers[row][1] ==  self.squers[row][2] != 0:
                 if show:
-                    sPos = (0, row * SQUER_SIZE + SQUER_SIZE // 2)
-                    ePos = (WIGHT, row * SQUER_SIZE + SQUER_SIZE // 2)
+                    sPos = (0, row * SQUER_SIZE + SQUER_SIZE // 2 + MENU_HIGHT)
+                    ePos = (WIDTH, row * SQUER_SIZE + SQUER_SIZE // 2 + MENU_HIGHT)
                     pygame.draw.line(screen, WIN_COLOR, sPos, ePos, LINE_WIDTH)
                 return self.squers[row][0]
         # desc diagonal
         if self.squers[0][0] ==  self.squers[1][1] ==  self.squers[2][2] != 0:
             if show:
-                sPos = (0, 0)
-                ePos = (WIGHT, HIGH)
+                sPos = (0, MENU_HIGHT)
+                ePos = (WIDTH, HIGHT + MENU_HIGHT)
                 pygame.draw.line(screen, WIN_COLOR, sPos, ePos, LINE_WIDTH)
             return self.squers[1][1]
 
         # asc diagonal
         if self.squers[2][0] ==  self.squers[1][1] ==  self.squers[0][2] != 0:
             if show:
-                sPos = (WIGHT, 0)
-                ePos = (0, HIGH)
+                sPos = (WIDTH, MENU_HIGHT)
+                ePos = (0, HIGHT + MENU_HIGHT)
                 pygame.draw.line(screen, WIN_COLOR, sPos, ePos, LINE_WIDTH)
             return self.squers[1][1]
 
@@ -167,11 +182,12 @@ class Game:
         # set bg
         screen.fill(BG_COLOR)
         # vertical lines
-        pygame.draw.line(screen, LINE_COLOR, (0, SQUER_SIZE), (WIGHT, SQUER_SIZE), 5)
-        pygame.draw.line(screen, LINE_COLOR, (0, HIGH - SQUER_SIZE), (WIGHT, HIGH - SQUER_SIZE), 5)
+        pygame.draw.line(screen, LINE_COLOR, (0, MENU_HIGHT), (WIDTH, MENU_HIGHT), 5)
+        pygame.draw.line(screen, LINE_COLOR, (0, SQUER_SIZE+MENU_HIGHT), (WIDTH, SQUER_SIZE+MENU_HIGHT), 5)
+        pygame.draw.line(screen, LINE_COLOR, (0, HIGHT - SQUER_SIZE+MENU_HIGHT), (WIDTH, HIGHT - SQUER_SIZE+MENU_HIGHT), 5)
         # horizontal lines
-        pygame.draw.line(screen, LINE_COLOR, (SQUER_SIZE, 0), (SQUER_SIZE, HIGH), 5)
-        pygame.draw.line(screen, LINE_COLOR, (WIGHT - SQUER_SIZE, 0), (WIGHT - SQUER_SIZE, HIGH), 5)
+        pygame.draw.line(screen, LINE_COLOR, (SQUER_SIZE, MENU_HIGHT), (SQUER_SIZE, HIGHT+MENU_HIGHT), 5)
+        pygame.draw.line(screen, LINE_COLOR, (WIDTH - SQUER_SIZE, MENU_HIGHT), (WIDTH - SQUER_SIZE, HIGHT+MENU_HIGHT), 5)
 
     def make_move(self, row, col):
         self.board.mark_sqr(row, col, self.player)
@@ -194,27 +210,29 @@ class Game:
         if self.player == 1:
             # a cross
             # desc-line
-            start_desc = (col * SQUER_SIZE + OFFSET, row * SQUER_SIZE + OFFSET)
-            end_desc = (col * SQUER_SIZE + SQUER_SIZE - OFFSET, row * SQUER_SIZE + SQUER_SIZE - OFFSET)
+            start_desc = (col * SQUER_SIZE + OFFSET, row * SQUER_SIZE + OFFSET + MENU_HIGHT)
+            end_desc = (col * SQUER_SIZE + SQUER_SIZE - OFFSET, row * SQUER_SIZE + SQUER_SIZE - OFFSET + MENU_HIGHT)
             pygame.draw.line(screen, LINE_COLOR, start_desc, end_desc, CROSS_WIDTH)
             # asc-line
-            start_asc = (col * SQUER_SIZE + OFFSET, row * SQUER_SIZE + SQUER_SIZE  - OFFSET)
-            end_asc = (col * SQUER_SIZE + SQUER_SIZE - OFFSET, row * SQUER_SIZE + OFFSET)
+            start_asc = (col * SQUER_SIZE + OFFSET, row * SQUER_SIZE + SQUER_SIZE  - OFFSET + MENU_HIGHT)
+            end_asc = (col * SQUER_SIZE + SQUER_SIZE - OFFSET, row * SQUER_SIZE + OFFSET + MENU_HIGHT)
             pygame.draw.line(screen, LINE_COLOR, start_asc, end_asc, CROSS_WIDTH)
 
         elif self.player == 2:
             # a circle
-            center = (col * SQUER_SIZE + SQUER_SIZE // 2, row * SQUER_SIZE + SQUER_SIZE // 2)
+            center = (col * SQUER_SIZE + SQUER_SIZE // 2, row * SQUER_SIZE + SQUER_SIZE // 2 + MENU_HIGHT )
             pygame.draw.circle(screen, CIRC_COLOR, center, RADUS, CIRC_WIDTH)
 
 # main
 def main():
     game = Game()
+    reset_button = Button("Reset")
     board = game.board
     ai = game.ai
     # The main loop
     while True:
-
+        screen.blit(menu_surface, (0, 0))
+        reset_button.show()
         for event in pygame.event.get():
 
             if event.type == pygame.QUIT:
@@ -242,15 +260,21 @@ def main():
          
             if event.type == pygame.MOUSEBUTTONDOWN:
                 pos = pygame.mouse.get_pos()
-                col = pos[0] // SQUER_SIZE
-                row = pos[1] // SQUER_SIZE
-            
-                if board.empty_squer(row, col) and game.running:
-                    game.make_move(row, col)
+                if pos[1] > MENU_HIGHT:
+                    #print(pos)
+                    col = pos[0] // SQUER_SIZE
+                    row = (pos[1] - MENU_HIGHT) // SQUER_SIZE
 
-                    if game.gameover():
-                        game.running = False
+                    if board.empty_squer(row, col) and game.running:
+                        game.make_move(row, col)
 
+                        if game.gameover():
+                            game.running = False
+                else:
+                    if 10 < pos[0] < reset_button.size[0] + 10:
+                        game.reset()
+                        board = game.board
+                        ai = game.ai
 
         if game.gamemode == 'ai' and game.player == ai.player and game.running:
             # update the screen
